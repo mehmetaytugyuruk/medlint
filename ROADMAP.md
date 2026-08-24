@@ -453,8 +453,7 @@ in an earlier phase.
 
 **Estimated duration:** 2-3 weeks for one maintainer
 
-**Status:** Release candidate; local gates passed and public v0.1.0 publication
-is the remaining exit condition.
+**Status:** Complete; v0.1.0 was published on GitHub and PyPI on 2026-08-24.
 
 **Objective**
 
@@ -788,5 +787,5 @@ The project owner approved entry into Phase 0 on 2026-08-24, including:
   of pixel canonicalization;
 - the rule that embedding-based similarity remains outside the core roadmap.
 
-The Phase 0 implementation is now at release-candidate status. Public v0.1.0
-publication and post-publication installation verification close the phase.
+Phase 0 is complete with the public v0.1.0 release. Later work begins from the
+Phase 1 boundary and does not expand the claims of the published first version.

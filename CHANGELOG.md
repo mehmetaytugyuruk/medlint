@@ -8,6 +8,12 @@ the `0.x` series.
 
 ## [Unreleased]
 
+### Changed
+
+- Updated GitHub Actions to current Node 24-based releases and prepared future
+  PyPI releases for Trusted Publishing after removing the one-time v0.1.0
+  bootstrap secret.
+
 ## [0.1.0] - 2026-08-24
 
 The first public alpha release provides a deterministic,
