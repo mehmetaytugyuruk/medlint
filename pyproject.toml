@@ -1,0 +1,116 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "medlint"
+version = "0.1.0"
+description = "A lightweight, evidence-first split-integrity auditor for medical imaging datasets"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Mehmet Aytug Yuruk" },
+]
+keywords = [
+  "data quality",
+  "dataset audit",
+  "dicom",
+  "medical imaging",
+  "machine learning",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Healthcare Industry",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+  "pydicom>=3.0,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2,<2",
+  "jsonschema>=4.23,<5",
+  "mypy>=1.14,<2",
+  "pytest>=8,<9",
+  "pytest-cov>=6,<7",
+  "ruff>=0.9,<1",
+  "twine>=7,<8",
+]
+
+[project.scripts]
+medlint = "medlint.cli:main"
+
+[project.urls]
+Documentation = "https://github.com/mehmetaytugyuruk/medlint#readme"
+Issues = "https://github.com/mehmetaytugyuruk/medlint/issues"
+Repository = "https://github.com/mehmetaytugyuruk/medlint"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/tests",
+  "/docs",
+  "/examples",
+  "/CHANGELOG.md",
+  "/CITATION.cff",
+  "/CONTRIBUTING.md",
+  "/LICENSE",
+  "/README.md",
+  "/ROADMAP.md",
+  "/SECURITY.md",
+  "/schemas",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/medlint"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"schemas/audit-result-v1.schema.json" = "share/medlint/audit-result-v1.schema.json"
+
+[tool.ruff]
+line-length = 88
+src = ["src", "tests"]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["medlint"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["src/medlint"]
+strict = true
+warn_unreachable = true
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-config --strict-markers --cov=medlint --cov-report=term-missing"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["medlint"]
+
+[tool.coverage.report]
+exclude_also = [
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
+]
+show_missing = true
+skip_covered = true
+fail_under = 90

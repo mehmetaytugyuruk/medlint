@@ -1,0 +1,425 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/mehmetaytugyuruk/medlint/v0.1.0/schemas/audit-result-v1.schema.json",
+  "title": "medlint audit result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tool_version",
+    "config_digest",
+    "splits",
+    "finding_status",
+    "coverage_status",
+    "audit_state",
+    "findings",
+    "coverage",
+    "diagnostics",
+    "policy",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "tool_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "config_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "splits": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "finding_status": {
+      "enum": ["no_findings", "potential_risk_detected"]
+    },
+    "coverage_status": {
+      "enum": ["complete", "partial", "inconclusive", "operational_error"]
+    },
+    "audit_state": {
+      "enum": [
+        "complete_no_findings",
+        "complete_with_findings",
+        "partial",
+        "inconclusive",
+        "operational_error"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/finding"}
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["catalog", "detectors"],
+      "properties": {
+        "catalog": {"$ref": "#/$defs/catalogCoverage"},
+        "detectors": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/detectorCoverage"}
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/diagnostic"}
+    },
+    "policy": {"$ref": "#/$defs/policy"},
+    "provenance": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "record_paths": {
+      "description": "Privacy-sensitive and present only after explicit opt-in.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["record_alias", "path"],
+        "properties": {
+          "record_alias": {"$ref": "#/$defs/recordAlias"},
+          "path": {"type": "string"}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {"$ref": "#/$defs/outcomeConsistency"},
+    {
+      "if": {
+        "properties": {"finding_status": {"const": "no_findings"}},
+        "required": ["finding_status"]
+      },
+      "then": {
+        "properties": {"findings": {"maxItems": 0}}
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "finding_status": {"const": "potential_risk_detected"}
+        },
+        "required": ["finding_status"]
+      },
+      "then": {
+        "properties": {"findings": {"minItems": 1}}
+      }
+    }
+  ],
+  "$defs": {
+    "outcomeConsistency": {
+      "oneOf": [
+        {
+          "properties": {
+            "finding_status": {"const": "no_findings"},
+            "coverage_status": {"const": "complete"},
+            "audit_state": {"const": "complete_no_findings"},
+            "policy": {
+              "properties": {
+                "finding_status": {"const": "no_findings"},
+                "coverage_status": {"const": "complete"},
+                "audit_state": {"const": "complete_no_findings"},
+                "exit_code": {"const": 0}
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "finding_status": {"const": "potential_risk_detected"},
+            "coverage_status": {"const": "complete"},
+            "audit_state": {"const": "complete_with_findings"},
+            "policy": {
+              "properties": {
+                "finding_status": {"const": "potential_risk_detected"},
+                "coverage_status": {"const": "complete"},
+                "audit_state": {"const": "complete_with_findings"},
+                "exit_code": {"const": 1}
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "finding_status": {"const": "no_findings"},
+            "coverage_status": {"const": "partial"},
+            "audit_state": {"const": "partial"},
+            "policy": {
+              "properties": {
+                "finding_status": {"const": "no_findings"},
+                "coverage_status": {"const": "partial"},
+                "audit_state": {"const": "partial"},
+                "exit_code": {"const": 3}
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "finding_status": {"const": "potential_risk_detected"},
+            "coverage_status": {"const": "partial"},
+            "audit_state": {"const": "partial"},
+            "policy": {
+              "properties": {
+                "finding_status": {"const": "potential_risk_detected"},
+                "coverage_status": {"const": "partial"},
+                "audit_state": {"const": "partial"},
+                "exit_code": {"const": 1}
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "finding_status": {"const": "no_findings"},
+            "coverage_status": {"const": "inconclusive"},
+            "audit_state": {"const": "inconclusive"},
+            "policy": {
+              "properties": {
+                "finding_status": {"const": "no_findings"},
+                "coverage_status": {"const": "inconclusive"},
+                "audit_state": {"const": "inconclusive"},
+                "exit_code": {"const": 3}
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "finding_status": {"const": "potential_risk_detected"},
+            "coverage_status": {"const": "inconclusive"},
+            "audit_state": {"const": "inconclusive"},
+            "policy": {
+              "properties": {
+                "finding_status": {"const": "potential_risk_detected"},
+                "coverage_status": {"const": "inconclusive"},
+                "audit_state": {"const": "inconclusive"},
+                "exit_code": {"const": 1}
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "finding_status": {"const": "no_findings"},
+            "coverage_status": {"const": "operational_error"},
+            "audit_state": {"const": "operational_error"},
+            "policy": {
+              "properties": {
+                "finding_status": {"const": "no_findings"},
+                "coverage_status": {"const": "operational_error"},
+                "audit_state": {"const": "operational_error"},
+                "exit_code": {"const": 2}
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "finding_status": {"const": "potential_risk_detected"},
+            "coverage_status": {"const": "operational_error"},
+            "audit_state": {"const": "operational_error"},
+            "policy": {
+              "properties": {
+                "finding_status": {"const": "potential_risk_detected"},
+                "coverage_status": {"const": "operational_error"},
+                "audit_state": {"const": "operational_error"},
+                "exit_code": {"const": 2}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "recordAlias": {
+      "type": "string",
+      "pattern": "^record-[0-9]{6,}$"
+    },
+    "countEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1},
+        "count": {"type": "integer", "minimum": 0}
+      },
+      "oneOf": [
+        {"required": ["code"], "not": {"required": ["reason"]}},
+        {"required": ["reason"], "not": {"required": ["code"]}}
+      ]
+    },
+    "catalogCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "declared_split_count",
+        "populated_split_count",
+        "evaluable_split_count",
+        "discovered",
+        "supported",
+        "hashed",
+        "dicom_candidates",
+        "dicom_parsed",
+        "dicom_identity_incomplete",
+        "outside_primary_profile",
+        "unsupported",
+        "unreadable",
+        "issue_counts"
+      ],
+      "properties": {
+        "declared_split_count": {"type": "integer", "minimum": 0},
+        "populated_split_count": {"type": "integer", "minimum": 0},
+        "evaluable_split_count": {"type": "integer", "minimum": 0},
+        "discovered": {"type": "integer", "minimum": 0},
+        "supported": {"type": "integer", "minimum": 0},
+        "hashed": {"type": "integer", "minimum": 0},
+        "dicom_candidates": {"type": "integer", "minimum": 0},
+        "dicom_parsed": {"type": "integer", "minimum": 0},
+        "dicom_identity_incomplete": {"type": "integer", "minimum": 0},
+        "outside_primary_profile": {"type": "integer", "minimum": 0},
+        "unsupported": {"type": "integer", "minimum": 0},
+        "unreadable": {"type": "integer", "minimum": 0},
+        "issue_counts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/countEntry"}
+        }
+      }
+    },
+    "detectorCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "detector_id",
+        "eligible_records",
+        "evaluated_records",
+        "unavailable_records",
+        "eligible_splits",
+        "evaluated_splits",
+        "reason_counts"
+      ],
+      "properties": {
+        "detector_id": {"type": "string", "pattern": "^ML[0-9]{3}$"},
+        "eligible_records": {"type": "integer", "minimum": 0},
+        "evaluated_records": {"type": "integer", "minimum": 0},
+        "unavailable_records": {"type": "integer", "minimum": 0},
+        "eligible_splits": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "evaluated_splits": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "reason_counts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/countEntry"}
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule_id",
+        "rule_version",
+        "category",
+        "evidence_strength",
+        "component_id",
+        "splits",
+        "record_aliases",
+        "observed_fact",
+        "method",
+        "explanation",
+        "limitation",
+        "recommendation"
+      ],
+      "properties": {
+        "rule_id": {"type": "string", "pattern": "^ML[0-9]{3}$"},
+        "rule_version": {"type": "string", "minLength": 1},
+        "category": {
+          "enum": [
+            "authoritative_group_relationship",
+            "acquisition_identifier_relationship",
+            "exact_file_content_relationship"
+          ]
+        },
+        "evidence_strength": {"type": "string", "minLength": 1},
+        "component_id": {
+          "type": "string",
+          "pattern": "^component-[0-9a-f]{16}$"
+        },
+        "splits": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "record_aliases": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/recordAlias"},
+          "uniqueItems": true
+        },
+        "observed_fact": {"type": "string", "minLength": 1},
+        "method": {"type": "string", "minLength": 1},
+        "explanation": {"type": "string", "minLength": 1},
+        "limitation": {"type": "string", "minLength": 1},
+        "recommendation": {"type": "string", "minLength": 1}
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "severity", "message"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["info", "warning", "error"]},
+        "message": {"type": "string", "minLength": 1},
+        "record_alias": {"$ref": "#/$defs/recordAlias"}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "policy_version",
+        "finding_status",
+        "coverage_status",
+        "audit_state",
+        "exit_code",
+        "summary"
+      ],
+      "properties": {
+        "policy_id": {"type": "string", "minLength": 1},
+        "policy_version": {"type": "string", "minLength": 1},
+        "finding_status": {
+          "enum": ["no_findings", "potential_risk_detected"]
+        },
+        "coverage_status": {
+          "enum": ["complete", "partial", "inconclusive", "operational_error"]
+        },
+        "audit_state": {
+          "enum": [
+            "complete_no_findings",
+            "complete_with_findings",
+            "partial",
+            "inconclusive",
+            "operational_error"
+          ]
+        },
+        "exit_code": {"type": "integer", "minimum": 0, "maximum": 3},
+        "summary": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

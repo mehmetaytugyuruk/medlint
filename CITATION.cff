@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: >-
+  If you use medlint in research, please cite the software using this metadata.
+title: medlint
+type: software
+version: 0.1.0
+date-released: 2026-08-24
+authors:
+  - family-names: Yuruk
+    given-names: Mehmet Aytug
+repository-code: https://github.com/mehmetaytugyuruk/medlint
+url: https://github.com/mehmetaytugyuruk/medlint
+license: Apache-2.0
+keywords:
+  - dataset auditing
+  - DICOM
+  - medical imaging
+  - machine learning
+  - split integrity
+abstract: >-
+  medlint is a lightweight, evidence-first, offline split-integrity auditor for
+  medical imaging datasets. It reports potential contamination risks and audit
+  coverage before model training without claiming patient identification or
+  leakage-free certification.

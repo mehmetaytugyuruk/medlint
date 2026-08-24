@@ -1,0 +1,119 @@
+{
+  "audit_state": "complete_with_findings",
+  "config_digest": "b95844b91e6029e87c26b415979760b5c19875c2c3a90c0a75727c7f8ebdf8f0",
+  "coverage": {
+    "catalog": {
+      "declared_split_count": 2,
+      "dicom_candidates": 0,
+      "dicom_identity_incomplete": 0,
+      "dicom_parsed": 0,
+      "discovered": 2,
+      "evaluable_split_count": 2,
+      "hashed": 2,
+      "issue_counts": [],
+      "outside_primary_profile": 0,
+      "populated_split_count": 2,
+      "supported": 2,
+      "unreadable": 0,
+      "unsupported": 0
+    },
+    "detectors": [
+      {
+        "detector_id": "ML001",
+        "eligible_records": 2,
+        "eligible_splits": [
+          "test",
+          "train"
+        ],
+        "evaluated_records": 2,
+        "evaluated_splits": [
+          "test",
+          "train"
+        ],
+        "reason_counts": [],
+        "unavailable_records": 0
+      },
+      {
+        "detector_id": "ML101",
+        "eligible_records": 0,
+        "eligible_splits": [],
+        "evaluated_records": 0,
+        "evaluated_splits": [],
+        "reason_counts": [],
+        "unavailable_records": 0
+      },
+      {
+        "detector_id": "ML102",
+        "eligible_records": 0,
+        "eligible_splits": [],
+        "evaluated_records": 0,
+        "evaluated_splits": [],
+        "reason_counts": [],
+        "unavailable_records": 0
+      },
+      {
+        "detector_id": "ML103",
+        "eligible_records": 0,
+        "eligible_splits": [],
+        "evaluated_records": 0,
+        "evaluated_splits": [],
+        "reason_counts": [],
+        "unavailable_records": 0
+      },
+      {
+        "detector_id": "ML104",
+        "eligible_records": 0,
+        "eligible_splits": [],
+        "evaluated_records": 0,
+        "evaluated_splits": [],
+        "reason_counts": [],
+        "unavailable_records": 0
+      }
+    ]
+  },
+  "coverage_status": "complete",
+  "diagnostics": [],
+  "finding_status": "potential_risk_detected",
+  "findings": [
+    {
+      "category": "exact_file_content_relationship",
+      "component_id": "component-5d7a4195e4bf862d",
+      "evidence_strength": "exact_content_match",
+      "explanation": "The same byte content was observed in more than one declared split, which is a potential split-contamination risk.",
+      "limitation": "This proves an exact content relationship, not patient identity; it does not detect files rewritten with different metadata or encoding.",
+      "method": "SHA-256 over the complete stored file bytes",
+      "observed_fact": "2 records in 2 splits have identical file bytes.",
+      "recommendation": "Review the source records and split assignment before model training.",
+      "record_aliases": [
+        "record-000001",
+        "record-000002"
+      ],
+      "rule_id": "ML001",
+      "rule_version": "1",
+      "splits": [
+        "test",
+        "train"
+      ]
+    }
+  ],
+  "policy": {
+    "audit_state": "complete_with_findings",
+    "coverage_status": "complete",
+    "exit_code": 1,
+    "finding_status": "potential_risk_detected",
+    "policy_id": "medlint.conservative-split-integrity",
+    "policy_version": "1",
+    "summary": "Potential contamination risk detected; review the factual evidence before model training."
+  },
+  "provenance": {
+    "medlint": "<tool-version>",
+    "pydicom": "<pydicom-version>",
+    "python": "<python-version>"
+  },
+  "schema_version": "1.0.0",
+  "splits": [
+    "test",
+    "train"
+  ],
+  "tool_version": "<tool-version>"
+}
