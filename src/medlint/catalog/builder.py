@@ -45,7 +45,6 @@ def _tokenize_dicom(
 
     return DicomSignals(
         patient_id_status=patient_status,
-        issuer_present=issuer is not None,
         patient_group_token=patient_token,
         study_uid_token=uid_token("study-instance-uid-v1", metadata.study_instance_uid),
         series_uid_token=uid_token(

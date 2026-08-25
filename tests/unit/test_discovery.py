@@ -69,6 +69,14 @@ def test_manifest_rejects_non_printable_split_labels(tmp_path: Path) -> None:
         discover(DatasetSpec.from_manifest(manifest))
 
 
+def test_manifest_rejects_invalid_utf8(tmp_path: Path) -> None:
+    manifest = tmp_path / "invalid-encoding.csv"
+    manifest.write_bytes(b"path,split\nimage-\xff.png,train\n")
+
+    with pytest.raises(DiscoveryError, match="valid UTF-8"):
+        discover(DatasetSpec.from_manifest(manifest))
+
+
 def test_missing_split_root_is_an_operational_error(tmp_path: Path) -> None:
     spec = DatasetSpec.from_split_roots([SplitSpec("train", tmp_path / "missing")])
 

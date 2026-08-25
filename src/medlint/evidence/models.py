@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
@@ -100,6 +100,10 @@ class DetectorResult:
     coverage: DetectorCoverage
     diagnostics: tuple[Diagnostic, ...] = ()
 
+    def __post_init__(self) -> None:
+        if self.detector_id != self.coverage.detector_id:
+            raise ValueError("detector result and coverage identifiers must match")
+
 
 @dataclass(frozen=True, slots=True)
 class PolicyOutcome:
@@ -145,9 +149,9 @@ class AuditResult:
     diagnostics: tuple[Diagnostic, ...]
     policy_outcome: PolicyOutcome
     provenance: tuple[tuple[str, str], ...]
-    _record_references: tuple[RecordReference, ...] = ()
-    _protected_files: tuple[Path, ...] = ()
-    _protected_roots: tuple[Path, ...] = ()
+    _record_references: tuple[RecordReference, ...] = field(default=(), repr=False)
+    _protected_files: tuple[Path, ...] = field(default=(), repr=False)
+    _protected_roots: tuple[Path, ...] = field(default=(), repr=False)
 
     @property
     def finding_status(self) -> str:

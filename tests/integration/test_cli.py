@@ -1,11 +1,28 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 
 from medlint.cli import main
+
+
+def test_python_module_entry_point_reports_the_installed_version() -> None:
+    project_root = Path(__file__).resolve().parents[2]
+    completed = subprocess.run(
+        [sys.executable, "-m", "medlint", "--version"],
+        cwd=project_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 0
+    assert completed.stdout.startswith("medlint ")
+    assert completed.stderr == ""
 
 
 def test_cli_writes_privacy_safe_json_and_returns_finding_code(

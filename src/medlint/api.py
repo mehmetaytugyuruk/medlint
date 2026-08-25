@@ -10,11 +10,8 @@ from pathlib import Path
 from medlint.catalog import CatalogCoverage, DatasetCatalog, build_catalog
 from medlint.config import AuditConfig, DatasetSpec, SplitSpec
 from medlint.detectors import built_in_detectors
-from medlint.evidence import (
-    AuditResult,
-    Diagnostic,
-    RecordReference,
-)
+from medlint.evidence import AuditResult, Diagnostic
+from medlint.evidence.models import RecordReference
 from medlint.io import DiscoveryError, discover
 from medlint.policy import AuditPolicy, ConservativeDefaultPolicy
 

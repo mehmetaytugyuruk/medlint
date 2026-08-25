@@ -3,8 +3,8 @@ message: >-
   If you use medlint in research, please cite the software using this metadata.
 title: medlint
 type: software
-version: 0.1.0
-date-released: 2026-08-24
+version: 0.1.1
+date-released: 2026-08-25
 authors:
   - family-names: Yuruk
     given-names: Mehmet Aytug
