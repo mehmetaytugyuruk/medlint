@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <defs>
+    <radialGradient id="cyan-glow" cx="50%" cy="0%" r="82%">
+      <stop offset="0%" stop-color="#00f0fc" stop-opacity="0.12" />
+      <stop offset="58%" stop-color="#00f0fc" stop-opacity="0.025" />
+      <stop offset="100%" stop-color="#00f0fc" stop-opacity="0" />
+    </radialGradient>
+    <pattern id="evidence-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#a5f8fc" fill-opacity="0.12" />
+    </pattern>
+    <clipPath id="lockup-window">
+      <rect x="100" y="88" width="1080" height="240" />
+    </clipPath>
+  </defs>
+
+  <rect width="1280" height="640" fill="#0b1116" />
+  <rect width="1280" height="640" fill="url(#cyan-glow)" />
+  <rect width="1280" height="640" fill="url(#evidence-grid)" />
+  <rect x="24" y="24" width="1232" height="592" rx="24"
+        fill="none" stroke="#00f0fc" stroke-opacity="0.13" />
+
+  <g clip-path="url(#lockup-window)">
+    <image href="medlint-lockup.png"
+           x="35.4" y="-0.9" width="1199.2" height="436.2"
+           preserveAspectRatio="none" />
+  </g>
+
+  <line x1="260" y1="374" x2="1020" y2="374"
+        stroke="#00f0fc" stroke-opacity="0.28" />
+
+  <text x="640" y="432" text-anchor="middle"
+        fill="#f7fafc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif"
+        font-size="36" font-weight="600">
+    Evidence-first split-integrity auditing
+  </text>
+  <text x="640" y="478" text-anchor="middle"
+        fill="#d5dde3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif"
+        font-size="28" font-weight="400">
+    for medical imaging datasets
+  </text>
+  <text x="640" y="548" text-anchor="middle"
+        fill="#00f0fc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif"
+        font-size="19" font-weight="600" letter-spacing="2.1">
+    OFFLINE  •  DETERMINISTIC  •  EXPLAINABLE  •  PRIVACY-SAFE
+  </text>
+</svg>

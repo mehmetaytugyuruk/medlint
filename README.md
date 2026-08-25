@@ -1,7 +1,31 @@
-# medlint
+<h1 align="center">
+  <img
+    src="https://raw.githubusercontent.com/mehmetaytugyuruk/medlint/main/.github/assets/brand/medlint-readme-header.png"
+    alt="medlint"
+    width="820"
+  >
+</h1>
 
-**A lightweight, evidence-first split-integrity auditor for medical imaging
-datasets.**
+<p align="center">
+  <strong>
+    A lightweight, evidence-first split-integrity auditor for medical imaging datasets.
+  </strong>
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/medlint/">
+    <img src="https://img.shields.io/pypi/v/medlint" alt="PyPI version">
+  </a>
+  <a href="https://pypi.org/project/medlint/">
+    <img src="https://img.shields.io/pypi/pyversions/medlint" alt="Supported Python versions">
+  </a>
+  <a href="https://github.com/mehmetaytugyuruk/medlint/actions/workflows/ci.yml">
+    <img src="https://github.com/mehmetaytugyuruk/medlint/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status">
+  </a>
+  <a href="https://github.com/mehmetaytugyuruk/medlint/blob/main/LICENSE">
+    <img src="https://img.shields.io/pypi/l/medlint" alt="License">
+  </a>
+</p>
 
 medlint is a pre-training smoke test. It examines declared dataset splits and
 reports evidence of relationships that may indicate a contamination risk, such
