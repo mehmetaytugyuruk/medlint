@@ -142,11 +142,16 @@ def test_default_json_does_not_expose_patient_ids_or_paths(tmp_path: Path) -> No
     result = audit_split_roots([SplitSpec("train", train), SplitSpec("test", test)])
     safe_json = result.to_json()
     opted_in_json = result.to_json(include_paths=True)
+    safe_repr = repr(result)
 
     assert sensitive_patient_id not in safe_json
     assert str(train_path) not in safe_json
     assert str(train_path) in opted_in_json
     assert sensitive_patient_id not in opted_in_json
+    assert str(train_path) not in safe_repr
+    assert "_record_references" not in safe_repr
+    assert "_protected_files" not in safe_repr
+    assert "_protected_roots" not in safe_repr
 
 
 def test_unsupported_input_makes_no_finding_result_partial(tmp_path: Path) -> None:
@@ -163,6 +168,34 @@ def test_unsupported_input_makes_no_finding_result_partial(tmp_path: Path) -> No
     assert _rules(result) == set()
     assert result.coverage_status == "partial"
     assert result.exit_code == 3
+
+
+def test_finding_takes_exit_precedence_without_hiding_partial_coverage(
+    tmp_path: Path,
+) -> None:
+    train = tmp_path / "train"
+    test = tmp_path / "test"
+    train.mkdir()
+    test.mkdir()
+    shared = b"cross-split duplicate with a coverage gap"
+    (train / "one.png").write_bytes(shared)
+    (test / "two.png").write_bytes(shared)
+    (test / "notes.txt").write_text("unsupported", encoding="utf-8")
+
+    result = audit_split_roots([SplitSpec("train", train), SplitSpec("test", test)])
+
+    assert _rules(result) == {"ML001"}
+    assert result.finding_status == "potential_risk_detected"
+    assert result.coverage_status == "partial"
+    assert result.audit_state == "partial"
+    assert result.exit_code == 1
+    assert "potential contamination risk detected" in (
+        result.policy_outcome.summary.casefold()
+    )
+    assert "partial" in result.policy_outcome.summary.casefold()
+    assert "unsupported_file_type" in {
+        diagnostic.code for diagnostic in result.diagnostics
+    }
 
 
 def test_semantic_json_is_deterministic_across_runs(tmp_path: Path) -> None:
@@ -268,6 +301,31 @@ def test_out_of_profile_dicom_modality_makes_coverage_partial(
     assert result.catalog_coverage.outside_primary_profile == 1
     assert result.coverage_status == "partial"
     assert result.exit_code == 3
+
+
+def test_missing_dicom_modality_is_reported_as_partial_coverage(
+    tmp_path: Path,
+) -> None:
+    train = tmp_path / "train"
+    test = tmp_path / "test"
+    write_test_dicom(train / "one.dcm", modality="")
+    write_test_dicom(
+        test / "two.dcm",
+        modality="DX",
+        study_uid=f"{TEST_UID_ROOT}.811",
+        series_uid=f"{TEST_UID_ROOT}.811.1",
+        sop_uid=f"{TEST_UID_ROOT}.811.1.1",
+        patient_id="PATIENT-002",
+    )
+
+    result = audit_split_roots([SplitSpec("train", train), SplitSpec("test", test)])
+
+    assert result.catalog_coverage.outside_primary_profile == 1
+    assert result.coverage_status == "partial"
+    assert result.exit_code == 3
+    assert "dicom_modality_missing" in {
+        diagnostic.code for diagnostic in result.diagnostics
+    }
 
 
 def test_multiframe_dicom_makes_coverage_partial(tmp_path: Path) -> None:

@@ -36,7 +36,7 @@ splits.
 It does **not** prove patient identity, detect every form of data leakage, or
 certify that a dataset is leakage-free.
 
-> **Status:** `0.1.0` is an alpha-stage public API. Its manifest, report, CLI,
+> **Status:** `0.1.1` is an alpha-stage public API. Its manifest, report, CLI,
 > and Python interfaces may change before `1.0.0`.
 
 ## Why medlint?

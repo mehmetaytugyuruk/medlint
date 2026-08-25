@@ -8,7 +8,6 @@ from .models import (
     EvidenceCategory,
     Finding,
     PolicyOutcome,
-    RecordReference,
 )
 
 __all__ = [
@@ -19,5 +18,4 @@ __all__ = [
     "EvidenceCategory",
     "Finding",
     "PolicyOutcome",
-    "RecordReference",
 ]

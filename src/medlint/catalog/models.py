@@ -21,7 +21,6 @@ class DicomSignals:
     """
 
     patient_id_status: str
-    issuer_present: bool
     patient_group_token: str | None
     study_uid_token: str | None
     series_uid_token: str | None

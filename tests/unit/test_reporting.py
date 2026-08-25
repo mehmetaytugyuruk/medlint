@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+import medlint.evidence as evidence
 from medlint import AuditResult, audit_manifest
 from medlint.reporting import write_json
 
@@ -19,6 +20,10 @@ def _manifest_result(tmp_path: Path) -> tuple[AuditResult, Path, Path]:
         encoding="utf-8",
     )
     return audit_manifest(manifest), manifest, train
+
+
+def test_private_record_reference_is_not_exported() -> None:
+    assert not hasattr(evidence, "RecordReference")
 
 
 def test_writer_protects_manifest_and_audited_record_paths(tmp_path: Path) -> None:
